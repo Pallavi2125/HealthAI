@@ -1,4 +1,4 @@
-from difflib import SequenceMatcher
+# medical_knowledge.py
 
 MEDICAL_KNOWLEDGE = {
     "cold": {
@@ -94,21 +94,11 @@ MEDICAL_KNOWLEDGE = {
     }
 }
 
-def get_matching_disease(symptoms):
-    best_match = None
-    best_score = 0
-
-    for disease, data in MEDICAL_KNOWLEDGE.items():
-        match_score = sum(
-            SequenceMatcher(None, s.lower(), known.lower()).ratio()
-            for s in symptoms
-            for known in data["symptoms"]
-        )
-        if match_score > best_score:
-            best_score = match_score
-            best_match = disease
-
-    return best_match if best_score > 1.0 else None
+def get_matching_disease(user_symptoms):
+    for disease, info in MEDICAL_KNOWLEDGE.items():
+        if all(symptom in info["symptoms"] for symptom in user_symptoms):
+            return disease
+    return None
 
 def get_remedies(disease):
-    return MEDICAL_KNOWLEDGE.get(disease, {}).get("remedies", ["No remedy available."])
+    return MEDICAL_KNOWLEDGE.get(disease, {}).get("remedies", [])
