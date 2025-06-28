@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template_string
 from medical_knowledge import get_matching_disease, get_remedies
 
-app = Flask(__name__)
+app = Flask(_name_)
 
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
@@ -47,5 +47,5 @@ def index():
         remedies = get_remedies(prediction) if prediction else ["Could not determine the disease."]
     return render_template_string(HTML_TEMPLATE, prediction=prediction, remedies=remedies)
 
-if __name__ == "__main__":
+if _name_ == "_main_":
     app.run(debug=True, host="0.0.0.0", port=5000)
