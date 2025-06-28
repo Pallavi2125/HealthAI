@@ -1,104 +1,45 @@
-# medical_knowledge.py
-
-MEDICAL_KNOWLEDGE = {
+# ========== Medical Knowledge Base ==========
+DISEASES = {
+    "flu": {
+        "symptoms": ["fever", "cough", "fatigue", "headache"],
+        "remedies": ["Rest", "Drink warm fluids", "Use paracetamol"],
+        "tip": "Avoid cold drinks. Stay isolated if coughing.",
+        "alert": ""
+    },
     "cold": {
-        "symptoms": ["cough", "sneezing", "runny nose", "sore throat", "congestion"],
-        "remedies": [
-            "Drink warm fluids like herbal tea",
-            "Use a humidifier to keep air moist",
-            "Take steam inhalation",
-            "Gargle with salt water",
-            "Rest well and stay hydrated"
-        ]
+        "symptoms": ["sneezing", "runny nose", "cough"],
+        "remedies": ["Steam inhalation", "Vitamin C-rich foods", "Stay hydrated"],
+        "tip": "Keep warm and avoid dusty environments.",
+        "alert": ""
     },
-    "fever": {
-        "symptoms": ["high temperature", "sweating", "chills", "headache", "weakness"],
-        "remedies": [
-            "Drink plenty of fluids like water and soups",
-            "Place a cool, damp cloth on your forehead",
-            "Take rest in a cool environment",
-            "Eat light food and avoid spicy items"
-        ]
+    "dengue": {
+        "symptoms": ["fever", "rash", "headache", "joint pain"],
+        "remedies": ["Papaya leaf juice", "Plenty of fluids", "Avoid aspirin"],
+        "tip": "Monitor platelet count daily.",
+        "alert": "🚨 Seek immediate medical attention if fever worsens."
     },
-    "diabetes": {
-        "symptoms": ["frequent urination", "excessive thirst", "hunger", "fatigue", "blurred vision"],
-        "remedies": [
-            "Consume fenugreek seeds soaked overnight",
-            "Exercise regularly to manage blood sugar",
-            "Avoid sugary and processed foods",
-            "Eat high-fiber foods like leafy greens"
-        ]
-    },
-    "headache": {
-        "symptoms": ["pain in head", "nausea", "sensitivity to light", "tightness in scalp"],
-        "remedies": [
-            "Apply peppermint oil on the forehead",
-            "Drink ginger tea",
-            "Avoid bright lights and loud noises",
-            "Practice deep breathing and relaxation"
-        ]
-    },
-    "indigestion": {
-        "symptoms": ["bloating", "heartburn", "nausea", "gas", "stomach discomfort"],
-        "remedies": [
-            "Drink warm water with lemon",
-            "Chew fennel seeds after meals",
-            "Avoid oily and spicy food",
-            "Practice yoga or mild walking"
-        ]
-    },
-    "sore throat": {
-        "symptoms": ["pain in throat", "difficulty swallowing", "dry throat", "scratchy feeling"],
-        "remedies": [
-            "Gargle with warm salt water",
-            "Drink turmeric milk at night",
-            "Suck on honey or herbal lozenges",
-            "Drink ginger tea or warm fluids"
-        ]
-    },
-    "asthma": {
-        "symptoms": ["shortness of breath", "wheezing", "chest tightness", "coughing"],
-        "remedies": [
-            "Steam inhalation with eucalyptus oil",
-            "Avoid cold air and dust",
-            "Practice breathing exercises like pranayama",
-            "Consume honey with ginger juice"
-        ]
-    },
-    "constipation": {
-        "symptoms": ["difficulty passing stool", "infrequent bowel movements", "bloating"],
-        "remedies": [
-            "Drink warm water with lemon on an empty stomach",
-            "Eat fiber-rich foods like bananas and oats",
-            "Include flax seeds or isabgol in your diet",
-            "Exercise regularly"
-        ]
-    },
-    "acidity": {
-        "symptoms": ["burning in chest", "acid reflux", "indigestion", "nausea"],
-        "remedies": [
-            "Drink cold milk or eat curd",
-            "Chew basil leaves or fennel seeds",
-            "Avoid oily and spicy food",
-            "Take coconut water in the morning"
-        ]
-    },
-    "cough": {
-        "symptoms": ["dry cough", "wet cough", "throat irritation", "chest pain while coughing"],
-        "remedies": [
-            "Drink honey with warm water",
-            "Use ginger-tulsi tea",
-            "Steam inhalation with menthol",
-            "Avoid cold food and drinks"
-        ]
+    "malaria": {
+        "symptoms": ["fever", "chills", "sweating", "vomiting"],
+        "remedies": ["Antimalarial medication", "Rest", "Stay hydrated"],
+        "tip": "Get a blood test immediately for confirmation.",
+        "alert": "🚨 Consult a physician urgently."
     }
 }
 
-def get_matching_disease(user_symptoms):
-    for disease, info in MEDICAL_KNOWLEDGE.items():
-        if all(symptom in info["symptoms"] for symptom in user_symptoms):
-            return disease
-    return None
-
-def get_remedies(disease):
-    return MEDICAL_KNOWLEDGE.get(disease, {}).get("remedies", [])
+# ========== Disease Prediction Function ==========
+def get_disease_predictions(user_symptoms):
+    predictions = []
+    for disease, info in DISEASES.items():
+        match = len(set(user_symptoms) & set(info["symptoms"]))
+        total = len(info["symptoms"])
+        score = int((match / total) * 100)
+        if match > 0:
+            predictions.append({
+                "Disease": disease.capitalize(),
+                "Confidence": f"{score}%",
+                "Remedies": info["remedies"],
+                "Tip": info["tip"],
+                "Alert": info["alert"]
+            })
+    predictions.sort(key=lambda x: int(x["Confidence"].strip('%')), reverse=True)
+    return predictions
