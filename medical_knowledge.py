@@ -1,4 +1,5 @@
-# ========== Medical Knowledge Base ==========
+# ================== Medical Knowledge Base ==================
+
 DISEASES = {
     "flu": {
         "symptoms": ["fever", "cough", "fatigue", "headache"],
@@ -7,33 +8,52 @@ DISEASES = {
         "alert": ""
     },
     "cold": {
-        "symptoms": ["sneezing", "runny nose", "cough"],
+        "symptoms": ["sneezing", "runny nose", "cough", "mild fever"],
         "remedies": ["Steam inhalation", "Vitamin C-rich foods", "Stay hydrated"],
         "tip": "Keep warm and avoid dusty environments.",
         "alert": ""
     },
     "dengue": {
-        "symptoms": ["fever", "rash", "headache", "joint pain"],
+        "symptoms": ["fever", "rash", "headache", "joint pain", "low platelet count"],
         "remedies": ["Papaya leaf juice", "Plenty of fluids", "Avoid aspirin"],
-        "tip": "Monitor platelet count daily.",
+        "tip": "Monitor platelet count daily and avoid dehydration.",
         "alert": "🚨 Seek immediate medical attention if fever worsens."
     },
     "malaria": {
-        "symptoms": ["fever", "chills", "sweating", "vomiting"],
-        "remedies": ["Antimalarial medication", "Rest", "Stay hydrated"],
+        "symptoms": ["fever", "chills", "sweating", "vomiting", "muscle pain"],
+        "remedies": ["Antimalarial medication", "Rest", "Stay hydrated", "Use mosquito nets"],
         "tip": "Get a blood test immediately for confirmation.",
         "alert": "🚨 Consult a physician urgently."
+    },
+    "typhoid": {
+        "symptoms": ["high fever", "abdominal pain", "constipation", "fatigue", "loss of appetite"],
+        "remedies": ["Antibiotics", "Boiled water", "Soft foods", "Oral rehydration"],
+        "tip": "Do not self-medicate. Maintain hygiene.",
+        "alert": "🚨 Go to hospital if fever worsens."
+    },
+    "covid-19": {
+        "symptoms": ["fever", "dry cough", "breathing difficulty", "loss of smell", "tiredness"],
+        "remedies": ["Isolation", "Paracetamol", "Steam inhalation", "Hydration"],
+        "tip": "Wear a mask and isolate.",
+        "alert": "🚨 Visit a COVID clinic if symptoms increase."
     }
 }
 
-# ========== Disease Prediction Function ==========
+# ================== Prediction Logic ==================
+
 def get_disease_predictions(user_symptoms):
     predictions = []
+    user_symptoms = [s.strip().lower() for s in user_symptoms if s.strip()]
+
+    if not user_symptoms:
+        return []
+
     for disease, info in DISEASES.items():
-        match = len(set(user_symptoms) & set(info["symptoms"]))
-        total = len(info["symptoms"])
-        score = int((match / total) * 100)
-        if match > 0:
+        disease_symptoms = [s.lower() for s in info["symptoms"]]
+        match_count = sum(1 for symptom in user_symptoms if any(symptom in ds for ds in disease_symptoms))
+        total = len(disease_symptoms)
+        if match_count > 0:
+            score = int((match_count / total) * 100)
             predictions.append({
                 "Disease": disease.capitalize(),
                 "Confidence": f"{score}%",
@@ -41,5 +61,6 @@ def get_disease_predictions(user_symptoms):
                 "Tip": info["tip"],
                 "Alert": info["alert"]
             })
+
     predictions.sort(key=lambda x: int(x["Confidence"].strip('%')), reverse=True)
     return predictions
